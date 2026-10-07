@@ -1,0 +1,250 @@
+VECTOR_DISTANCE 
+			Computes exact numeric similarity between two vectors.
+			Computes distance between two vectors (cosine, Euclidean, dot product).
+			Used in exact KNN search (full table scan).
+			Slow for large datasets.
+			When to use it - Small tables, Precise similarity scoring, Ranking results manually, Debugging embeddings
+
+VECTOR_SEARCH 
+			VECTOR_SEARCH( table.vector_column, query_vector, top_n, metric )
+			Performs a full similarity search using a vector index, returning the top‑K nearest neighbors efficiently.
+			Uses a vector index (DiskANN) to perform fast nearest‑neighbor search.
+			Returns top‑K similar rows.
+			Designed for large-scale AI workloads.
+			When to use it - Large datasets (millions of rows), Real‑time semantic search, RAG pipelines, Recommendation systems
+			  
+VECTOR_NORMALIZE() 
+			Transforms a vector so that its magnitude becomes 1.
+			This is essential for: cosine similarity, semantic search, embedding comparison, vector indexing, stable distance metrics
+			
+VECTORPROPERTY 
+			Returns metadata about a vector column or a vector index.
+			It does not compute similarity, distance, or search results.
+			Instead, it tells you how the vector is stored, indexed, and configured.
+			
+VECTOR_SEARCH → retrieves the rows
+VECTOR_DISTANCE → computes the score for each row
+
+CONTAINSTABLE → 
+			precise, structured, Boolean full‑text search 
+			“Search for exact terms using rules.”
+ 
+FREETEXTTABLE → 
+			natural‑language, concept‑based search
+			“Search for meaning using language.”
+			
+
+- Exact nearest neighbor (k-NN) search involves calculating the distance between a query vector and all vectors in your dataset, then returning the k closest matches. 
+	This method guarantees precise results but can be computationally intensive for large datasets.
+			
+
+
+			
+| 		Function 		| Purpose 				| Returns 		|
+| --------------------- | --------------------- | ------------- |
+| **JSON_VALUE** 		| Extract scalar 		| NVARCHAR(4000) |
+| **JSON_QUERY** 		| Extract object/array 	| NVARCHAR(MAX) |
+| **OPENJSON** 			| Parse JSON → rows 	| Table |
+| **JSON_OBJECT** 		| Build object 			| NVARCHAR(MAX) |
+| **JSON_ARRAY** 		| Build array 			| NVARCHAR(MAX) |
+| **JSON_ARRAYAGG** 	| Aggregate → array 	| NVARCHAR(MAX) |
+| **JSON_OBJECTAGG** 	| Aggregate → object 	| NVARCHAR(MAX) |
+| **JSON_MODIFY** 		| Update JSON 			| NVARCHAR(MAX) |
+| **ISJSON** 			| Validate JSON 		| 0/1 |
+| **RETURNING** 		| Typed extraction		| SQL type |
+
+
+| 		Function			| Purpose 				| Returns |
+| ------------------------- | -----------------	 	| ------- |
+| **REGEXP_LIKE** 			| Test pattern match 	| 0/1 |
+| **REGEXP_REPLACE** 		| Replace pattern 		| NVARCHAR |
+| **REGEXP_SUBSTR** 		| Extract first match 	| NVARCHAR |
+| **REGEXP_INSTR** 			| Position of match 	| INT |
+| **REGEXP_COUNT** 			| Count matches 		| INT |
+| **REGEXP_MATCHES** 		| All matches 			| Table |
+| **REGEXP_SPLIT_TO_TABLE** | Split string 			| Table |
+
+
+| Character | LIKE | Regex | JSON Path |
+| --------- | --- | --- | --- |
+| 	%	 	| wildcard | literal % | literal % |
+|   _ 		| wildcard | literal _ | literal _ |
+| 	^	 	| negation in [] | start anchor | not used |
+| 	$		| literal | end anchor | root symbol |
+| 	.		| literal | any character | property separator |
+| 	+		| literal | one or more | literal |
+| **\\*** 	| literal | zero or more | literal |
+| **[]** 	| character set | character class | array index |
+| **\\** 	| escape | escape | escape in some cases |
+
+
+Point lookups = equality lookups on a key.
+Hash indexes are designed specifically for:	equality predicates, single‑row lookups, ultra‑low latency
+
+Columnstore is optimized for: scans, aggregations, compression, analytical workloads
+Columnstore is NOT optimized for: point lookups, high‑frequency inserts, low‑latency writes
+
+
+GitHub MCP Server supports OAuth only when the client (Visual Studio) is configured through an MCP configuration file.
+
+dotnet build db1.sqlproj does perform full schema validation for SDK‑style SQL projects.
+MSBuild + the SQL project SDK will:
+✔ Parse every .sql file - Tables, views, functions, stored procedures, synonyms, triggers, etc.
+
+✔ Validate object dependencies 
+	Examples: Does a view reference a table that exists?
+			  Does a stored procedure call a function that exists?
+			  Are column names valid?
+			  Are types resolvable?
+			  Are foreign keys valid?
+
+✔ Validate system object references - If you reference sys.objects, sys.dm_exec_sessions, etc., the build checks the system database model.
+
+✔ Validate Azure SQL / SQL Server compatibility - Based on the target platform defined in the .sqlproj.
+
+✔ Produce a DACPAC only if the schema is valid - If validation fails, the DACPAC is not produced.
+
+
+
+
+
+
+----Git----
+
+git checkout <feature-branch>
+				Moves you to your working branch where your SQL Database Project changes live.
+
+git fetch origin → Download changes only
+
+git pull origin main
+				Updates your feature branch with the latest schema changes from main.
+				This prevents merge conflicts when you create the PR.
+				Download + merge changes into your current branch
+				= git fetch origin main + git merge origin/main
+
+git push origin <feature-branch>
+				Pushes your updated branch so GitHub can create the PR.
+
+gh pr create
+				Creates the pull request for review and CI validation.
+				--base main → merge into main
+				--head <feature-branch> → merge from your branch
+
+
+Randomized encryption provides:
+				Same plaintext → different ciphertext
+				Strongest protection
+				Prevents:
+					equality comparisons
+					joins
+					indexing
+					pattern inference
+
+Deterministic encryption provides:
+				Same plaintext → same ciphertext
+				Supports: =, IN, Joins
+				Does not support: LIKE, , <, Range queries
+					
+==========================================================================================================================================================
+
+--AI and ML Concepts -- 
+
+Machine learning (ML) is a branch of artificial intelligence that focuses on building models that learn patterns from data so they can make predictions, classify information, or generate insights without being explicitly programmed for every rule.
+
+## **📌 What Machine Learning Actually Is**
+Machine learning is the process of teaching a computer system to **learn from examples**.
+
+## **📌 How Machine Learning Works (Simple Flow)**
+
+1. **Collect data**  - Example: customer purchases, text, images, sensor readings.
+
+2. **Train a model**  - The model learns patterns from the data.
+
+3. **Generate predictions**  
+   The model can now:
+   - classify text  
+   - detect fraud  
+   - recommend products  
+   - generate embeddings  
+   - score sentiment  
+
+4. **Improve over time**  
+   More data → better accuracy.
+
+---
+
+### **1. Model**
+A model is a mathematical function that:
+- takes input  
+- produces output  
+- based on patterns learned during training  
+
+SQL Server 2025 uses **external models** (Azure OpenAI, Foundry, etc.) via REST APIs.
+
+---
+
+### **2. Features**
+The measurable inputs used for learning.
+
+Example:
+- age  
+- purchase history  
+- text tokens  
+- image pixels  
+
+---
+
+### **3. Embeddings**
+A special type of ML output:  **vectors that represent meaning**.
+
+Used for:
+- semantic search  
+- similarity matching  
+- RAG (Retrieval Augmented Generation)
+
+SQL Server 2025 can generate embeddings directly using AI functions.
+
+---
+
+### **4. Vector** - A list of numbers representing features or meaning.
+
+Example: [0.12, -0.98, 0.44, ...]
+
+SQL Server 2025 introduces:
+- `VECTOR` data type  
+- vector indexes  
+- vector search  
+
+---
+
+You can call ML models directly from T‑SQL using:
+
+- `CREATE EXTERNAL MODEL`  
+- `AI_GENERATE_EMBEDDINGS`  
+- `AI_GENERATE_CHUNKS`  
+- `VECTOR_SEARCH`  
+
+---
+
+## **📌 Simple Example (Conceptual)**
+
+### **Input** - “Find documents similar to this sentence.”
+
+### **ML Steps**
+1. Model generates embeddings for the sentence  
+2. SQL Server stores embeddings in a `VECTOR` column  
+3. Vector search finds closest matches  
+4. Results returned based on semantic similarity  
+
+No rules written — the model learned meaning from data.
+
+----------------------------------------------------------
+
+Claude is an AI model created by Anthropic, designed to be a large‑language model (LLM) similar to GPT‑4, Gemini, and others — but with a strong emphasis on safety, reasoning, and constitutional AI.
+
+Anthropic built Claude around constitutional AI, which means:
+
+- the model follows a set of written principles
+- it tries to be helpful, harmless, and honest
+- it avoids harmful outputs by design
+
