@@ -23,8 +23,17 @@ VECTORPROPERTY
 			Instead, it tells you how the vector is stored, indexed, and configured.
 			
 VECTOR_SEARCH → retrieves the rows
+
 VECTOR_DISTANCE → computes the score for each row
 
+SQL Server 2025 supports several distance metrics:
+		Cosine similarity: Measures the angle between vectors, ideal for text embeddings
+							Lower distance = more similar
+							Higher distance = less similar
+		Euclidean distance: Measures straight-line distance in vector space
+		Dot product: Useful for normalized vectors
+	
+		
 CONTAINSTABLE → 
 			precise, structured, Boolean full‑text search 
 			“Search for exact terms using rules.”
@@ -32,12 +41,20 @@ CONTAINSTABLE →
 FREETEXTTABLE → 
 			natural‑language, concept‑based search
 			“Search for meaning using language.”
-			
+
+Generate an embedding vector
+	You call AI_GENERATE_EMBEDDINGS, which sends the text “Pink Floyd music style”  to an external embedding model (Azure OpenAI, Foundry, etc.)
+
+
+
+
+
+
 
 - Exact nearest neighbor (k-NN) search involves calculating the distance between a query vector and all vectors in your dataset, then returning the k closest matches. 
 	This method guarantees precise results but can be computationally intensive for large datasets.
-			
-
+- For larger datasets, approximate nearest neighbor (ANN) search provides a balance between speed and accuracy. 
+	SQL Server 2025 implements ANN using the DiskANN algorithm, which creates a graph-based index for efficient vector navigation.
 
 			
 | 		Function 		| Purpose 				| Returns 		|
@@ -84,7 +101,6 @@ Hash indexes are designed specifically for:	equality predicates, single‑row lo
 Columnstore is optimized for: scans, aggregations, compression, analytical workloads
 Columnstore is NOT optimized for: point lookups, high‑frequency inserts, low‑latency writes
 
-
 GitHub MCP Server supports OAuth only when the client (Visual Studio) is configured through an MCP configuration file.
 
 dotnet build db1.sqlproj does perform full schema validation for SDK‑style SQL projects.
@@ -104,12 +120,61 @@ MSBuild + the SQL project SDK will:
 
 ✔ Produce a DACPAC only if the schema is valid - If validation fails, the DACPAC is not produced.
 
+==========================================================================================================================================================
 
+--Core Window Functions
 
+1. Ranking Functions 
 
+	ROW_NUMBER() – Unique sequential integer per partition (arbitrary tie‑break).
 
+	RANK() – Sequential integer with gaps after ties (1,1,3).
 
-----Git----
+	DENSE_RANK() – Sequential integer without gaps after ties (1,1,2).
+
+2. Aggregate Window Functions 
+
+	SUM() – Running totals or group totals.
+
+	AVG() – Average over a window.
+
+	MIN() / MAX() – Minimum/maximum over a window.
+
+	COUNT() – Row counts over a window.
+
+	FIRST_VALUE() / LAST_VALUE() – First/last value in order.
+
+	ANY_VALUE() – Arbitrary value from the window.
+
+3. Offset Functions 
+	
+	LAG() – Previous row’s value(s) in the window.
+
+	LEAD() – Next row’s value(s) in the window.
+
+	FIRST_LAG() / LAST_LAG() – First/last previous value.
+
+4. Other Common Functions 
+
+	NTILE() – Divide rows into fixed number of groups (buckets).
+
+	PERCENT_RANK() – Relative rank as a percentage.
+
+	CUME_DIST() – Cumulative distribution function.
+
+Key points for DP‑800 
+
+	OVER is mandatory for window functions.
+	
+	PARTITION BY defines groups for calculations.
+
+	ORDER BY defines row order within partitions.
+
+	Frame clauses (ROWS BETWEEN ... AND ...) define the range of rows for the calculation.
+
+	Ranking functions differ in tie‑breaking behavior (exam may test this).
+
+==========================================================================================================================================================
 
 git checkout <feature-branch>
 				Moves you to your working branch where your SQL Database Project changes live.
@@ -130,6 +195,7 @@ gh pr create
 				--base main → merge into main
 				--head <feature-branch> → merge from your branch
 
+==========================================================================================================================================================
 
 Randomized encryption provides:
 				Same plaintext → different ciphertext
@@ -147,98 +213,45 @@ Deterministic encryption provides:
 					
 ==========================================================================================================================================================
 
+-- Azure SQL Database Compute Models
+	A. vCore-Based Model - Allocates a configurable number of virtual cores (vCores), memory, and storage resources for the database.
+	B. DTU-Based Model - Uses Database Transaction Units (DTUs), an abstracted measure combining CPU, memory, and I/O to define performance.
+	C. Serverless Compute - Automates scaling and pauses databases when idle, billing per second of usage.
+-- Service Tiers
+	General Purpose: Balanced, budget-oriented workloads with built-in storage redundancy.
+	Business Critical: High-performance workloads requiring low-latency I/O and high resilience with multiple replicas.
+	Hyperscale: Maximized for high throughput, massive storage, rapid backup/restore, and horizontal scaling for OLTP or HTAP workloads.
+
+==========================================================================================================================================================
+
 --AI and ML Concepts -- 
 
 Machine learning (ML) is a branch of artificial intelligence that focuses on building models that learn patterns from data so they can make predictions, classify information, or generate insights without being explicitly programmed for every rule.
 
-## **📌 What Machine Learning Actually Is**
-Machine learning is the process of teaching a computer system to **learn from examples**.
+How Machine Learning Works (Simple Flow)
 
-## **📌 How Machine Learning Works (Simple Flow)**
+1. Collect data  - Example: customer purchases, text, images, sensor readings.
+2. Train a model  - The model learns patterns from the data.
+3. Generate predictions - The model can now: classify text, detect fraud, recommend products, generate embeddings, score sentiment  
+4. Improve over time - More data → better accuracy.
 
-1. **Collect data**  - Example: customer purchases, text, images, sensor readings.
-
-2. **Train a model**  - The model learns patterns from the data.
-
-3. **Generate predictions**  
-   The model can now:
-   - classify text  
-   - detect fraud  
-   - recommend products  
-   - generate embeddings  
-   - score sentiment  
-
-4. **Improve over time**  
-   More data → better accuracy.
-
----
-
-### **1. Model**
-A model is a mathematical function that:
+-- Model - is a mathematical function that:
 - takes input  
 - produces output  
 - based on patterns learned during training  
 
-SQL Server 2025 uses **external models** (Azure OpenAI, Foundry, etc.) via REST APIs.
+-- Embeddings - A special type of ML output:  vectors that represent meaning
+	Used for: - semantic search , - similarity matching , - RAG (Retrieval Augmented Generation)
 
----
+-- Vector - A list of numbers representing features or meaning.
 
-### **2. Features**
-The measurable inputs used for learning.
+-- You can call ML models directly from T‑SQL using:
+ 	- `CREATE EXTERNAL MODEL`  
+	- `AI_GENERATE_EMBEDDINGS`  
+	- `AI_GENERATE_CHUNKS`  
+	- `VECTOR_SEARCH`  
 
-Example:
-- age  
-- purchase history  
-- text tokens  
-- image pixels  
-
----
-
-### **3. Embeddings**
-A special type of ML output:  **vectors that represent meaning**.
-
-Used for:
-- semantic search  
-- similarity matching  
-- RAG (Retrieval Augmented Generation)
-
-SQL Server 2025 can generate embeddings directly using AI functions.
-
----
-
-### **4. Vector** - A list of numbers representing features or meaning.
-
-Example: [0.12, -0.98, 0.44, ...]
-
-SQL Server 2025 introduces:
-- `VECTOR` data type  
-- vector indexes  
-- vector search  
-
----
-
-You can call ML models directly from T‑SQL using:
-
-- `CREATE EXTERNAL MODEL`  
-- `AI_GENERATE_EMBEDDINGS`  
-- `AI_GENERATE_CHUNKS`  
-- `VECTOR_SEARCH`  
-
----
-
-## **📌 Simple Example (Conceptual)**
-
-### **Input** - “Find documents similar to this sentence.”
-
-### **ML Steps**
-1. Model generates embeddings for the sentence  
-2. SQL Server stores embeddings in a `VECTOR` column  
-3. Vector search finds closest matches  
-4. Results returned based on semantic similarity  
-
-No rules written — the model learned meaning from data.
-
-----------------------------------------------------------
+==========================================================================================================================================================
 
 Claude is an AI model created by Anthropic, designed to be a large‑language model (LLM) similar to GPT‑4, Gemini, and others — but with a strong emphasis on safety, reasoning, and constitutional AI.
 
