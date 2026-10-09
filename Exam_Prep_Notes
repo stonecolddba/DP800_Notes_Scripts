@@ -70,6 +70,11 @@ Generate an embedding vector
 | **ISJSON** 			| Validate JSON 		| 0/1 |
 | **RETURNING** 		| Typed extraction		| SQL type |
 
+JSON_PATH_EXISTS() - Checks whether a specified JSON path exists in the input JSON. - Returns 1 or 0.
+JSON_CONTAINS() - Checks whether a value exists at a JSON path.
+JSON Path Operators - $ → root, . → property, [] → array index, * → wildcard, ? → filter predicate
+FOR JSON PATH - Return the result set as a JSON array, using the column names as JSON keys.
+FOR JSON AUTO - Convert the result set to JSON automatically based on the table and column structure.
 
 | 		Function			| Purpose 				| Returns |
 | ------------------------- | -----------------	 	| ------- |
@@ -246,10 +251,10 @@ How Machine Learning Works (Simple Flow)
 -- Vector - A list of numbers representing features or meaning.
 
 -- You can call ML models directly from T‑SQL using:
- 	- `CREATE EXTERNAL MODEL`  
-	- `AI_GENERATE_EMBEDDINGS`  
-	- `AI_GENERATE_CHUNKS`  
-	- `VECTOR_SEARCH`  
+ 	- `CREATE EXTERNAL MODEL` - Registers an AI model (local ONNX or remote REST) inside SQL Server so it can be used for inference.  
+	- `AI_GENERATE_EMBEDDINGS` - Generates a vector embedding from text using a registered external model.
+	- `AI_GENERATE_CHUNKS` - Splits long text into semantically meaningful chunks for RAG pipelines.
+	- `VECTOR_SEARCH` - Performs fast similarity search to find the top‑K closest vectors in a table.
 
 ==========================================================================================================================================================
 
