@@ -1,5 +1,5 @@
 VECTOR_DISTANCE 
-			Computes exact numeric similarity between two vectors.
+			Computes the similarity (or distance) between two vectors — typically embeddings
 			Computes distance between two vectors (cosine, Euclidean, dot product).
 			Used in exact KNN search (full table scan).
 			Slow for large datasets.
@@ -22,10 +22,6 @@ VECTORPROPERTY
 			It does not compute similarity, distance, or search results.
 			Instead, it tells you how the vector is stored, indexed, and configured.
 			
-VECTOR_SEARCH → retrieves the rows
-
-VECTOR_DISTANCE → computes the score for each row
-
 SQL Server 2025 supports several distance metrics:
 		Cosine similarity: Measures the angle between vectors, ideal for text embeddings
 							Lower distance = more similar
@@ -33,14 +29,13 @@ SQL Server 2025 supports several distance metrics:
 		Euclidean distance: Measures straight-line distance in vector space
 		Dot product: Useful for normalized vectors
 	
-		
-CONTAINSTABLE → 
-			precise, structured, Boolean full‑text search 
-			“Search for exact terms using rules.”
+CONTAINSTABLE → Perform full‑text search and return rows that match a text query, along with a relevance rank.
+				precise, structured, Boolean full‑text search 
+				“Search for exact terms using rules.”
  
 FREETEXTTABLE → 
-			natural‑language, concept‑based search
-			“Search for meaning using language.”
+				natural‑language, concept‑based search
+				“Search for meaning using language.”
 
 Generate an embedding vector
 	You call AI_GENERATE_EMBEDDINGS, which sends the text “Pink Floyd music style”  to an external embedding model (Azure OpenAI, Foundry, etc.)
@@ -75,6 +70,11 @@ JSON_CONTAINS() - Checks whether a value exists at a JSON path.
 JSON Path Operators - $ → root, . → property, [] → array index, * → wildcard, ? → filter predicate
 FOR JSON PATH - Return the result set as a JSON array, using the column names as JSON keys.
 FOR JSON AUTO - Convert the result set to JSON automatically based on the table and column structure.
+
+* OPENJSON is mainly for shredding JSON into rows and columns.
+* AI_GENERATE_CHUNKS is for chunking text, not extracting fields from a response payload.
+* VECTOR_DISTANCE computes similarity between vectors and is unrelated to JSON extraction.
+* FOR XML PATH produces XML, not JSON.
 
 | 		Function			| Purpose 				| Returns |
 | ------------------------- | -----------------	 	| ------- |
